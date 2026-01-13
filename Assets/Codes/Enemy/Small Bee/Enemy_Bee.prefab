@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 6398938111209975883}
   m_Layer: 11
   m_Name: Enemy_Bee
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -203,7 +203,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 1321291943178217664}
   - {fileID: 6398938111209975883}
-  DeathSound: {fileID: 8300000, guid: 11d14b6c7a3dd2546ba9c151fd6532d3, type: 3}
+  DeathSound: {fileID: 8300000, guid: 5fca240a0efe2b445a6d5221bb90f82c, type: 3}
   HurtSound: {fileID: 8300000, guid: 5570a196f47ede6489019c26e6917702, type: 3}
 --- !u!114 &6398938111209975883
 MonoBehaviour:
