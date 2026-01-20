@@ -25,7 +25,13 @@ public class Player_Movement : MonoBehaviour
     public float Dashing_Power = 10f;
     public float DashingTime = 0.2f;
     public float DashingCooldown = 1f;
-    
+
+    [Header("Sprinting")]
+    public float SprintSpeed = 10f;
+    public float SprintHoldTime = 0.2f;
+    private float shiftHeldTimer;
+    private float baseMoveSpeed;
+
     [Header("WallSliding and Jumping")]
     private bool IsWallSliding;
     private float WallSlidingSpeed = 3f;
@@ -40,6 +46,11 @@ public class Player_Movement : MonoBehaviour
     [Header("Jump Height")]
     [Range(0.1f, 1f)]
     public float JumpCutMultiplier = 0.6f;
+
+    [Header("Jump Momentum")]
+    public float JumpForwardForce = 3f;
+    public float SprintJumpMultiplier = 1.5f;
+    public float JumpAcceleration = 20f;
 
 
     [Header("Gravity Control")]
@@ -57,6 +68,7 @@ public class Player_Movement : MonoBehaviour
     private bool IsLedgeGrabbing;
     private Vector2 ledgePos;
     private float originalGravity;
+    private float jumpMomentum;
 
     //public GameObject AttackPoint;
     //public float radius;
@@ -74,6 +86,7 @@ public class Player_Movement : MonoBehaviour
         animator = GetComponent<Animator>();
         BoxColli = GetComponent<BoxCollider2D>();
 
+        baseMoveSpeed = SpeedMove;
         playerHalfHeight = sprite_renderer.bounds.extents.y;
     }
 
@@ -99,6 +112,7 @@ public class Player_Movement : MonoBehaviour
         }
 
         HandleJumpInput();
+        HandleDashOrSprint();
         HandleMovement();
         HandleWallSlide();
         HandleWallJump();
@@ -111,9 +125,20 @@ public class Player_Movement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!isGrounded && jumpMomentum != 0f && !IsWallJumping)
+        {
+            float accel = jumpMomentum * JumpAcceleration * Time.fixedDeltaTime;
+            rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x + accel, rigid_bod.linearVelocity.y);
+        }
+
         if (IsDashing)
         {
             return;
+        }
+
+        if (isGrounded)
+        {
+            jumpMomentum = 0f;
         }
 
         if (IsLedgeGrabbing)
@@ -131,7 +156,21 @@ public class Player_Movement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x, JumpPower);
+
+            float direction = Mathf.Sign(transform.localScale.x);
+            float sprintBonus = IsDashing ? SprintJumpMultiplier : 1f;
+
+            jumpMomentum = JumpForwardForce * sprintBonus * direction;
         }
+        //float maxAirSpeed = isSprinting ? SprintSpeed * 1.4f : SpeedMove * 1.2f;
+
+        //rigid_bod.linearVelocity = new Vector2(
+        //    Mathf.Clamp(rigid_bod.linearVelocity.x, -maxAirSpeed, maxAirSpeed),
+        //    rigid_bod.linearVelocity.y
+        //);
+
+        //float direction = moving_X != 0 ? Mathf.Sign(moving_X) : Mathf.Sign(transform.localScale.x);
+
 
         if (Input.GetButtonUp("Jump") && rigid_bod.linearVelocity.y > 0)
         {
@@ -146,11 +185,44 @@ public class Player_Movement : MonoBehaviour
         {
             rigid_bod.linearVelocity += Vector2.up * Physics2D.gravity.y * (LowJumpMultiplier - 1) * Time.deltaTime;
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && CanDash)
+    private void HandleDashOrSprint()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            StartCoroutine(Dash());
+            if (isGrounded && !IsDashing)
+            {
+                shiftHeldTimer += Time.deltaTime;
+
+                if (shiftHeldTimer >= SprintHoldTime)
+                {
+                    SpeedMove = SprintSpeed;
+                    Trails.emitting = true;
+                }
+            }
         }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            if (shiftHeldTimer < SprintHoldTime && CanDash && isGrounded)
+            {
+                StartCoroutine(Dash());
+                Trails.emitting = false;
+            }
+            ResetSprint();
+            Trails.emitting = false;
+        }
+
+        if (!isGrounded)
+        {
+            ResetSprint();
+        }
+    }
+    private void ResetSprint()
+    {
+        shiftHeldTimer = 0f;
+        SpeedMove = baseMoveSpeed;
     }
 
     private void HandleMovement()
@@ -244,6 +316,7 @@ public class Player_Movement : MonoBehaviour
     {
         CanDash = false;
         IsDashing = true;
+        SpeedMove = baseMoveSpeed;
 
         float OG_Gravity = rigid_bod.gravityScale;
         rigid_bod.gravityScale = 0f;
