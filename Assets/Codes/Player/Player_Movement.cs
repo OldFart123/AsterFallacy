@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
 {
+    #region Headers
     [Header("Misc.")]
     [SerializeField] private LayerMask GroundLayer;
     [SerializeField] private LayerMask WallLayer;
@@ -13,60 +14,89 @@ public class Player_Movement : MonoBehaviour
     private SpriteRenderer sprite_renderer;
     private Animator animator;
     private BoxCollider2D BoxColli;
-
     [Header("Movement")]
     public float SpeedMove = 7f;
     public float JumpPower = 7.76f;
     private float moving_X;
 
     [Header("Dashing")]
-    private bool CanDash = true;
-    private bool IsDashing;
     public float Dashing_Power = 10f;
     public float DashingTime = 0.2f;
     public float DashingCooldown = 1f;
+    private bool CanDash = true;
+    private bool IsDashing;
 
     [Header("Sprinting")]
     public float SprintSpeed = 10f;
     public float SprintHoldTime = 0.2f;
     private float shiftHeldTimer;
     private float baseMoveSpeed;
+    private bool isSprinting;
 
-    [Header("WallSliding and Jumping")]
+    [Header("WallSliding")]
+    [SerializeField] private float wallCheckDistance = 0.5f;
+    [SerializeField] private float wallSlideDelay = 0.08f;
     private bool IsWallSliding;
     private float WallSlidingSpeed = 3f;
     private float WallSlideTimer;
+
+    [Header("WallCling")]
+    [SerializeField] private float wallClingTime = 0.3f;
+    [SerializeField] private float wallClingFallSpeed = 0f;
     private float WallClingTimer;
     private bool IsWallClinging;
+    public bool IsWallClinging1 { get => IsWallClinging; set => IsWallClinging = value; }
 
-    private bool IsWallJumping;
+    [Header("WallJumping")]
     private float WallJumpingDirection;
     private float WallJumpingTime = 0.3f;
     private float WallJumpingCounter;
     private float WallJumpingDuration = 0.2f;
-    public Vector2 WallJumping_Power = new Vector2(2f, 7f);
+    private bool IsWallJumping;
+    public Vector2 WallJumping_Power = new Vector2(1.5f, 7f);
 
-    [SerializeField] private float wallCheckDistance = 0.5f;
-    [SerializeField] private float wallSlideDelay = 0.08f;
-    [SerializeField] private float wallClingTime = 0.3f;
-    [SerializeField] private float wallClingFallSpeed = 0f;
 
     [Header("Jump Height")]
     [Range(0.1f, 1f)]
     public float JumpCutMultiplier = 0.6f;
 
     [Header("Jump Momentum")]
-    public float JumpForwardForce = 3f;
-    public float SprintJumpMultiplier = 1.5f;
-    public float JumpAcceleration = 20f;
-
+    public float SprintJumpMultiplier = 1.15f;
+    private float jumpTakeoffSpeed;
 
     [Header("Gravity Control")]
     public float FallMultiplier = 2.5f;
     public float LowJumpMultiplier = 2f;
 
     private bool facingRight = true;
+
+    #region Mess up fix in code
     private bool isGrounded;
+    public float VerticalVelocity
+    {
+        get
+        {
+            return rigid_bod.linearVelocity.y;
+        }
+    }
+
+    public void DyingHorz()
+    {
+        rigid_bod.linearVelocity = new Vector2(0, 0);
+    }
+
+    public bool IsGroundedPublic
+    {
+        get
+        {
+            return isGrounded;
+        }
+    }
+    public bool IsGroundedPublicated => isGrounded;
+    public float VerticalSpeed => rigid_bod.linearVelocity.y;
+    public float HorizontalSpeed => Mathf.Abs(rigid_bod.linearVelocity.x);
+    #endregion
+
     private float playerHalfHeight;
 
     [Header("Ledge Grab")]
@@ -74,14 +104,20 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] private float ledgeClimbUp = 0.6f;
 
     [Header("Air Control")]
-    [SerializeField] private float airAcceleration = 15f;
-    [SerializeField] private float airDeceleration = 10f;
+    [SerializeField] private float airAcceleration = 7f;
     [SerializeField] private float airMaxSpeed;
 
     private bool IsLedgeGrabbing;
     private Vector2 ledgePos;
     private float originalGravity;
     private float jumpMomentum;
+
+    [Header("Sprint Afterimages")]
+    [SerializeField] private Clones afterimagePrefab;
+    [SerializeField] private float afterimageSpawnRate = 0.05f;
+    [SerializeField] private Color afterimageColor = new Color(1f, 1f, 1f, 0.6f);
+
+    private float afterimageTimer;
 
     //public GameObject AttackPoint;
     //public float radius;
@@ -91,10 +127,10 @@ public class Player_Movement : MonoBehaviour
     [Header("SFX")]
     [SerializeField] private AudioClip JumpSound;
 
-    public bool IsWallClinging1 { get => IsWallClinging; set => IsWallClinging = value; }
-
     //SoundManager.instance.PlaySound(JumpSound);
+    #endregion Headers
 
+    #region The Basic Three Codes
     private void Awake()
     {
         rigid_bod = GetComponent<Rigidbody2D>();
@@ -123,23 +159,21 @@ public class Player_Movement : MonoBehaviour
             return;
         }
 
-        if (Input.GetKey(KeyCode.E))
-        {
-            animator.SetBool("Kick", true);
-        }
+        //if (Input.GetKey(KeyCode.E))
+        //{
+        //    animator.SetBool("Kick", true);
+        //}
 
         HandleJumpInput();
         HandleDashOrSprint();
         HandleMovement();
         HandleWallSlide();
         HandleWallJump();
+        HandleSprintAfterimages();
 
-        animator.SetFloat("IsRunning", Mathf.Abs(rigid_bod.linearVelocity.x));
-        animator.SetFloat("Grounded", rigid_bod.linearVelocity.y);
-        animator.SetBool("IsJUMPing", !isGrounded);
-        animator.SetBool("IsWallSliding", IsWallSliding);
-        animator.SetBool("IsWallClinging", IsWallClinging = WallClingTimer < wallClingTime && WallClingTimer > 0f);
+        UpdateAnimator();
     }
+
 
     void FixedUpdate()
     {
@@ -147,29 +181,22 @@ public class Player_Movement : MonoBehaviour
         {
             return;
         }
-
         float targetSpeed = moving_X * SpeedMove;
-        float speedDiff = targetSpeed - rigid_bod.linearVelocity.x;
-
-        float accelRate;
-
         if (isGrounded)
         {
-            accelRate = SpeedMove * 10f;
+            rigid_bod.linearVelocity = new Vector2(moving_X * SpeedMove, rigid_bod.linearVelocity.y);
+            jumpTakeoffSpeed = rigid_bod.linearVelocity.x;
         }
         else
         {
-            accelRate = Mathf.Abs(targetSpeed) > 0.01f ? airAcceleration : airDeceleration;
+            float speedDiff = targetSpeed - rigid_bod.linearVelocity.x;
+            float accel = airAcceleration * Time.fixedDeltaTime;
+
+            float movement = Mathf.Clamp(speedDiff, -accel, accel);
+            //float movement = speedDiff > 0 ? accel : 0f; breaks walljumping, but feels SOOOO good.
+
+            rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x + movement, rigid_bod.linearVelocity.y);
         }
-
-        float movement = speedDiff * accelRate * Time.fixedDeltaTime;
-
-        if (!isGrounded && Mathf.Abs(rigid_bod.linearVelocity.x) > airMaxSpeed && Mathf.Sign(rigid_bod.linearVelocity.x) == Mathf.Sign(moving_X))
-        {
-            movement = 0;
-        }
-
-        rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x + movement, rigid_bod.linearVelocity.y);
 
         ApplyBetterGravity();
 
@@ -180,54 +207,34 @@ public class Player_Movement : MonoBehaviour
     }
 
 
+    #endregion The Basic Three Codes
 
+    #region Updated Animation code
+    private void UpdateAnimator()
+    {
+        animator.SetBool("IsGrounded", isGrounded);
+        animator.SetFloat("VerticalSpeed", rigid_bod.linearVelocity.y);
+        animator.SetFloat("IsRunning", Mathf.Abs(rigid_bod.linearVelocity.x));
+        animator.SetBool("IsWallSliding", IsWallSliding);
+        animator.SetBool("IsWallClinging", IsWallClinging);
+    }
+    #endregion Updated Animation code
+
+    #region Jump, HandleMovement and BetterGravity
     private void HandleJumpInput()
     {
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x, JumpPower);
+            SoundManager.instance.PlaySound(JumpSound);
+            jumpTakeoffSpeed = rigid_bod.linearVelocity.x;
+            float sprintBoost = isSprinting ? SprintJumpMultiplier : 1f;
+            rigid_bod.linearVelocity = new Vector2(jumpTakeoffSpeed, JumpPower * sprintBoost);
         }
 
         if (Input.GetButtonUp("Jump") && rigid_bod.linearVelocity.y > 0)
-        {
+        {            
             rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x, rigid_bod.linearVelocity.y * JumpCutMultiplier);
         }
-    }
-
-
-    private void HandleDashOrSprint()
-    {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            if (isGrounded && !IsDashing)
-            {
-                shiftHeldTimer += Time.deltaTime;
-
-                if (shiftHeldTimer >= SprintHoldTime)
-                {
-                    SpeedMove = SprintSpeed;
-                }
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            if (shiftHeldTimer < SprintHoldTime && CanDash)
-            {
-                StartCoroutine(Dash());
-            }
-            ResetSprint();
-        }
-
-        if (!isGrounded)
-        {
-            ResetSprint();
-        }
-    }
-    private void ResetSprint()
-    {
-        shiftHeldTimer = 0f;
-        SpeedMove = baseMoveSpeed;
     }
 
     private void HandleMovement()
@@ -239,7 +246,96 @@ public class Player_Movement : MonoBehaviour
 
         TryLedgeGrab();
     }
+    private void ApplyBetterGravity()
+    {
+        if (rigid_bod.linearVelocity.y < 0)
+        {
+            rigid_bod.linearVelocity += Vector2.up * Physics2D.gravity.y * (FallMultiplier - 1) * Time.fixedDeltaTime;
+        }
+        else if (rigid_bod.linearVelocity.y > 0 && !Input.GetButton("Jump"))
+        {
+            rigid_bod.linearVelocity += Vector2.up * Physics2D.gravity.y * (LowJumpMultiplier - 1) * Time.fixedDeltaTime;
+        }
+    }
+    #endregion Jump, HandleMovement and BetterGravity
 
+    #region Dash and Sprint
+    private void HandleDashOrSprint()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && isGrounded && !IsDashing)
+        {
+            shiftHeldTimer += Time.deltaTime;
+
+            if (shiftHeldTimer >= SprintHoldTime)
+            {
+                SpeedMove = SprintSpeed;
+                isSprinting = true;
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            if (shiftHeldTimer < SprintHoldTime && CanDash)
+            {
+                StartCoroutine(Dash());
+            }
+
+            ResetSprint();
+        }
+
+        if (!isGrounded)
+        {
+            ResetSprint();
+        }
+    }
+    private IEnumerator Dash()
+    {
+        IsWallSliding = false;
+        IsWallJumping = false;
+        CanDash = false;
+        IsDashing = true;
+        SpeedMove = baseMoveSpeed;
+        moving_X = 0f;
+
+
+        float OG_Gravity = rigid_bod.gravityScale;
+        rigid_bod.gravityScale = 0f;
+
+        float dashDir;
+        Trails.Clear();
+        Trails.emitting = true;
+        int wallSide = WallSide();
+
+        if (wallSide != 0)
+        {
+            dashDir = -wallSide;
+        }
+        else
+        {
+            dashDir = moving_X != 0 ? Mathf.Sign(moving_X) : Mathf.Sign(transform.localScale.x);
+        }
+
+        rigid_bod.linearVelocity = new Vector2(dashDir * Dashing_Power, 1.1f);
+
+
+        yield return new WaitForSeconds(DashingTime);
+
+        Trails.emitting = false;
+        rigid_bod.gravityScale = OG_Gravity;
+        IsDashing = false;
+
+        yield return new WaitForSeconds(DashingCooldown);
+        CanDash = true;
+    }
+    private void ResetSprint()
+    {
+        shiftHeldTimer = 0f;
+        SpeedMove = baseMoveSpeed;
+        isSprinting = false;
+    }
+    #endregion Dash and Sprint
+
+    #region WallSlide
     private void HandleWallSlide()
     {
         if (IsLedgeGrabbing || IsWallJumping)
@@ -280,7 +376,24 @@ public class Player_Movement : MonoBehaviour
             IsWallSliding = false;
         }
     }
+    private int WallSide()
+    {
+        RaycastHit2D right = Physics2D.Raycast(transform.position, Vector2.right, wallCheckDistance, WallLayer);
+        RaycastHit2D left = Physics2D.Raycast(transform.position, Vector2.left, wallCheckDistance, WallLayer);
 
+        if (right)
+        {
+            return 1;
+        }
+        if (left)
+        {
+            return -1;
+        }
+        return 0;
+    }
+    #endregion WallSlide
+
+    #region WallJumping and reset WallState
     private void HandleWallJump()
     {
         if (IsWallSliding)
@@ -300,7 +413,7 @@ public class Player_Movement : MonoBehaviour
             IsWallJumping = true;
             rigid_bod.linearVelocity = new Vector2(WallJumpingDirection * WallJumping_Power.x, WallJumping_Power.y);
             WallJumpingCounter = 0f;
-            animator.SetBool("IsJUMPing", true);
+            animator.SetBool("IsGrounded", false);
 
             if (transform.localScale.x != WallJumpingDirection)
             {
@@ -320,7 +433,9 @@ public class Player_Movement : MonoBehaviour
         WallClingTimer = 0f;
         WallSlideTimer = 0f;
     }
+    #endregion WallJumping and reset WallState
 
+    #region Flipping
     void HandleFlip()
     {
         if (moving_X > 0 && !facingRight)
@@ -332,7 +447,6 @@ public class Player_Movement : MonoBehaviour
             Flip();
         }
     }
-
     void Flip()
     {
         facingRight = !facingRight;
@@ -340,79 +454,9 @@ public class Player_Movement : MonoBehaviour
         scale.x *= -1;
         transform.localScale = scale;
     }
+    #endregion Flipping
 
-    private IEnumerator Dash()
-    {
-        IsWallSliding = false;
-        IsWallJumping = false;
-        CanDash = false;
-        IsDashing = true;
-        SpeedMove = baseMoveSpeed;
-
-
-        float OG_Gravity = rigid_bod.gravityScale;
-        rigid_bod.gravityScale = 0f;
-
-        float dashDir;
-        Trails.Clear();
-        Trails.emitting = true;
-        int wallSide = WallSide();
-
-        if (wallSide != 0)
-        {
-            dashDir = -wallSide;
-        }
-        else
-        {
-            dashDir = moving_X != 0 ? Mathf.Sign(moving_X) : Mathf.Sign(transform.localScale.x);
-        }
-
-        rigid_bod.linearVelocity = new Vector2(dashDir * Dashing_Power, 1.5f);
-
-
-        yield return new WaitForSeconds(DashingTime);
-
-        Trails.emitting = false;
-        rigid_bod.gravityScale = OG_Gravity;
-        IsDashing = false;
-
-        yield return new WaitForSeconds(DashingCooldown);
-        CanDash = true;
-    }
-
-    private bool CheckGrounded()
-    {
-        return Physics2D.Raycast(transform.position, Vector2.down, playerHalfHeight + 0.1f, LayerMask.GetMask("Ground"));
-    }
-    private void ApplyBetterGravity()
-    {
-        if (rigid_bod.linearVelocity.y < 0)
-        {
-            rigid_bod.linearVelocity += Vector2.up * Physics2D.gravity.y * (FallMultiplier - 1) * Time.fixedDeltaTime;
-        }
-        else if (rigid_bod.linearVelocity.y > 0 && !Input.GetButton("Jump"))
-        {
-            rigid_bod.linearVelocity += Vector2.up * Physics2D.gravity.y * (LowJumpMultiplier - 1) * Time.fixedDeltaTime;
-        }
-    }
-
-
-    private int WallSide()
-    {
-        RaycastHit2D right = Physics2D.Raycast(transform.position, Vector2.right, wallCheckDistance, WallLayer);
-        RaycastHit2D left = Physics2D.Raycast(transform.position, Vector2.left, wallCheckDistance, WallLayer);
-
-        if (right)
-        {
-            return 1;
-        }
-        if (left)
-        {
-            return -1;
-        }
-        return 0;
-    }
-
+    #region LedgeGrab
     private bool CheckLedge(int wallSide)
     {
         Vector2 wallCheckPos = (Vector2)transform.position + Vector2.right * wallSide * wallCheckDistance;
@@ -492,15 +536,53 @@ public class Player_Movement : MonoBehaviour
         animator.SetBool("IsLedgeGrabbing", false);
         rigid_bod.gravityScale = originalGravity;
     }
+    #endregion LedgeGrab
 
+    #region Attack Code Unfinished AS OF YET!
     //public bool canAttack()
     //{
     //    return moving_X == 0 && isGrounded() && !onWall();
     //}
+    #endregion Attack Code Unfinished AS OF YET!
+
+    #region After Images
+    private void HandleSprintAfterimages()
+    {
+        if (!isSprinting || Mathf.Abs(rigid_bod.linearVelocity.x) < 0.2f)
+        {
+            afterimageTimer = 0f;
+            return;
+        }
+
+        afterimageTimer -= Time.deltaTime;
+
+        if (afterimageTimer <= 0f)
+        {
+            SpawnAfterimage();
+            afterimageTimer = afterimageSpawnRate;
+        }
+    }
+    private void SpawnAfterimage()
+    {
+        Clones img = Instantiate(afterimagePrefab, transform.position, Quaternion.identity);
+
+        SpriteRenderer playerSprite = sprite_renderer;
+
+        img.Init(playerSprite.sprite, transform.localScale, afterimageColor);
+    }
+    #endregion After Images
+
+    #region Raycasts
+
+    private bool CheckGrounded()
+    {
+        return Physics2D.Raycast(transform.position, Vector2.down, playerHalfHeight + 0.1f, LayerMask.GetMask("Ground"));
+    }
     private void OnDrawGizmosSelected()
     {
         Vector2 dir = facingRight ? Vector2.right : Vector2.left;
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)(dir * wallCheckDistance));
         //Gizmos.DrawWireSphere(AttackPoint.transform.position, radius);
     }
+    #endregion Raycasts
 }

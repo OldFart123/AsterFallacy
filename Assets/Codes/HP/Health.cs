@@ -8,6 +8,7 @@ public class Health : MonoBehaviour
     public float currentHealth { get; private set; }
     private Animator anim;
     private bool dead;
+    Player_Movement _Movement;
 
     [Header("iFrames")]
     [SerializeField] private float iFramesDuration;
@@ -27,6 +28,7 @@ public class Health : MonoBehaviour
     private void Awake()
     {
         currentHealth = startingHealth;
+        _Movement = GetComponent<Player_Movement>();
         anim = GetComponent<Animator>();
         spriteRend = GetComponent<SpriteRenderer>();
     }
@@ -47,12 +49,15 @@ public class Health : MonoBehaviour
             {
 
                 foreach (Behaviour component in components)
+                {
                     component.enabled = false;
+                }
 
-                anim.SetBool("Grounded", true);
+                anim.SetFloat("Grounded", _Movement.VerticalVelocity);
                 anim.SetTrigger("Die");
 
                 dead = true;
+                _Movement.DyingHorz();
                 SoundManager.instance.PlaySound(DeathSound);
             }
         }
