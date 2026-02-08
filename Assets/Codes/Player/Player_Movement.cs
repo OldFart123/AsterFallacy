@@ -125,9 +125,8 @@ public class Player_Movement : MonoBehaviour
     //public float damage_to_enemies;
 
     [Header("SFX")]
-    [SerializeField] private AudioClip JumpSound;
+    private IPlayerSFX sfx;
 
-    //SoundManager.instance.PlaySound(JumpSound);
     #endregion Headers
 
     #region The Basic Three Codes
@@ -137,6 +136,7 @@ public class Player_Movement : MonoBehaviour
         sprite_renderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         BoxColli = GetComponent<BoxCollider2D>();
+        sfx = GetComponent<IPlayerSFX>();
 
         baseMoveSpeed = SpeedMove;
         airMaxSpeed = SprintSpeed * 1.1f;
@@ -225,14 +225,14 @@ public class Player_Movement : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            SoundManager.instance.PlaySound(JumpSound);
+            sfx?.PrJumping();
             jumpTakeoffSpeed = rigid_bod.linearVelocity.x;
             float sprintBoost = isSprinting ? SprintJumpMultiplier : 1f;
             rigid_bod.linearVelocity = new Vector2(jumpTakeoffSpeed, JumpPower * sprintBoost);
         }
 
         if (Input.GetButtonUp("Jump") && rigid_bod.linearVelocity.y > 0)
-        {            
+        {
             rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x, rigid_bod.linearVelocity.y * JumpCutMultiplier);
         }
     }
@@ -290,6 +290,7 @@ public class Player_Movement : MonoBehaviour
     }
     private IEnumerator Dash()
     {
+        sfx?.PrDashing();
         IsWallSliding = false;
         IsWallJumping = false;
         CanDash = false;
@@ -369,11 +370,13 @@ public class Player_Movement : MonoBehaviour
         if (WallSlideTimer >= wallSlideDelay)
         {
             IsWallSliding = true;
+            sfx?.PrStartWallSlide();
             rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x, Mathf.Clamp(rigid_bod.linearVelocity.y, -WallSlidingSpeed, float.MaxValue));
         }
         else
         {
             IsWallSliding = false;
+            sfx?.PrStopWallSlide();
         }
     }
     private int WallSide()
@@ -429,6 +432,7 @@ public class Player_Movement : MonoBehaviour
     }
     private void ResetWallState()
     {
+        sfx?.PrStopWallSlide();
         IsWallSliding = false;
         WallClingTimer = 0f;
         WallSlideTimer = 0f;

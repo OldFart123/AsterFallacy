@@ -9,7 +9,6 @@ public class UIManager : MonoBehaviour
 
     [Header("Pause")]
     [SerializeField] private GameObject PauseScreen;
-
     private void Awake()
     {
         gameOverScreen.SetActive(false);

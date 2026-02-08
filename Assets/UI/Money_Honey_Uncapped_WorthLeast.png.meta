@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9ec5d82d90f4ddc4797154b43187482d
+guid: 7ae91425bebe66140803edb35bfa1dae
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4432793351920879750
-    second: Hearts_0
+      213: 8899191002300827045
+    second: Money_Honey_Uncapped_WorthLeast_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 128
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Hearts_0
+      name: Money_Honey_Uncapped_WorthLeast_0
       rect:
         serializedVersion: 2
-        x: 35
-        y: 28
-        width: 90
-        height: 100
+        x: 30
+        y: 31
+        width: 101
+        height: 91
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 68805ff4112748d30800000000000000
-      internalID: 4432793351920879750
+      spriteID: 5a54e701117408b70800000000000000
+      internalID: 8899191002300827045
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: ef19462456b34014bafc9cbb49e3302a
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -133,11 +133,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      Hearts_0: 4432793351920879750
+      Money_Honey_Uncapped_WorthLeast_0: 8899191002300827045
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -14,12 +14,13 @@ public class LootBox : MonoBehaviour, IDamagable
     public void Damage(int dmg)
     {
         //current health
-        Debug.Log($"{gameObject} received {dmg} damage");
+        Debug.Log($"{gameObject} received {dmg} damage, left {Health}/{maxHealth}");
         Health -= dmg;
         //dead
         if(Health <= 0)
         {
             Destroy(gameObject);
+            Debug.Log($"{gameObject} is dead");
         }
     }
 }
