@@ -70,8 +70,8 @@ public class Player_Movement : MonoBehaviour
 
     private bool facingRight = true;
 
-    #region Mess up fix in code
     private bool isGrounded;
+    #region Mess up fix in code
     public float VerticalVelocity
     {
         get
@@ -98,6 +98,10 @@ public class Player_Movement : MonoBehaviour
     #endregion
 
     private float playerHalfHeight;
+
+    [Header("Attack")]
+    [SerializeField] private GameObject attackHitbox;
+    private bool isAttacking;
 
     [Header("Ledge Grab")]
     [SerializeField] private float ledgeCheckHeight = 0.4f;
@@ -159,11 +163,6 @@ public class Player_Movement : MonoBehaviour
             return;
         }
 
-        //if (Input.GetKey(KeyCode.E))
-        //{
-        //    animator.SetBool("Kick", true);
-        //}
-
         HandleJumpInput();
         HandleDashOrSprint();
         HandleMovement();
@@ -212,6 +211,11 @@ public class Player_Movement : MonoBehaviour
     #region Updated Animation code
     private void UpdateAnimator()
     {
+        if (Input.GetMouseButtonDown(0) && !isAttacking)
+        {
+            Attack();
+        }
+
         animator.SetBool("IsGrounded", isGrounded);
         animator.SetFloat("VerticalSpeed", rigid_bod.linearVelocity.y);
         animator.SetFloat("IsRunning", Mathf.Abs(rigid_bod.linearVelocity.x));
@@ -543,10 +547,25 @@ public class Player_Movement : MonoBehaviour
     #endregion LedgeGrab
 
     #region Attack Code Unfinished AS OF YET!
-    //public bool canAttack()
+    private void Attack()
+    {
+        isAttacking = true;
+        animator.SetBool("IsAttackings", true);
+    }
+    public void EnableAttackHitbox()
+    {
+        attackHitbox.SetActive(true);
+    }
+    public void DisableAttackHitbox()
+    {
+        attackHitbox.SetActive(false);
+        isAttacking = false;
+    }
+    //public void EndAttack()
     //{
-    //    return moving_X == 0 && isGrounded() && !onWall();
+    //    isAttacking = false;
     //}
+
     #endregion Attack Code Unfinished AS OF YET!
 
     #region After Images

@@ -53,7 +53,7 @@ public class Health : MonoBehaviour
                     component.enabled = false;
                 }
 
-                anim.SetFloat("Grounded", _Movement.VerticalVelocity);
+                anim.SetBool("IsGrounded", _Movement);
                 anim.SetTrigger("Die");
 
                 dead = true;

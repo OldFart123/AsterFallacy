@@ -69,7 +69,7 @@ public class Collectior : MonoBehaviour
         //Quick fade in
         yield return StartCoroutine(Fade(1f, 1f, 1f));
         //Stay visible
-        yield return new WaitForSeconds(8f);
+        yield return new WaitForSeconds(5f);
         //Slow fade out
         yield return StartCoroutine(Fade(1f, 0f, 1f));
 
