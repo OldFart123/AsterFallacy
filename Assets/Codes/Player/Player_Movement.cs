@@ -14,10 +14,12 @@ public class Player_Movement : MonoBehaviour
     private SpriteRenderer sprite_renderer;
     private Animator animator;
     private BoxCollider2D BoxColli;
+
     [Header("Movement")]
     public float SpeedMove = 7f;
     public float JumpPower = 7.76f;
     private float moving_X;
+    public bool canMove = true;
 
     [Header("Dashing")]
     public float Dashing_Power = 10f;
@@ -25,6 +27,8 @@ public class Player_Movement : MonoBehaviour
     public float DashingCooldown = 1f;
     private bool CanDash = true;
     private bool IsDashing;
+    public bool IsCurrentlyDashing => IsDashing;
+
 
     [Header("Sprinting")]
     public float SprintSpeed = 10f;
@@ -39,13 +43,14 @@ public class Player_Movement : MonoBehaviour
     private bool IsWallSliding;
     private float WallSlidingSpeed = 3f;
     private float WallSlideTimer;
+    public bool IsCurrentlyWallSliding => IsWallSliding;
 
     [Header("WallCling")]
     [SerializeField] private float wallClingTime = 0.3f;
     [SerializeField] private float wallClingFallSpeed = 0f;
     private float WallClingTimer;
     private bool IsWallClinging;
-    public bool IsWallClinging1 { get => IsWallClinging; set => IsWallClinging = value; }
+    public bool IsCurrentlyWallClinging => IsWallClinging;
 
     [Header("WallJumping")]
     private float WallJumpingDirection;
@@ -99,13 +104,10 @@ public class Player_Movement : MonoBehaviour
 
     private float playerHalfHeight;
 
-    [Header("Attack")]
-    [SerializeField] private GameObject attackHitbox;
-    private bool isAttacking;
-
     [Header("Ledge Grab")]
     [SerializeField] private float ledgeCheckHeight = 0.4f;
     [SerializeField] private float ledgeClimbUp = 0.6f;
+    public bool IsCurrentlyLedgeGrabbing => IsLedgeGrabbing;
 
     [Header("Air Control")]
     [SerializeField] private float airAcceleration = 7f;
@@ -122,11 +124,6 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] private Color afterimageColor = new Color(1f, 1f, 1f, 0.6f);
 
     private float afterimageTimer;
-
-    //public GameObject AttackPoint;
-    //public float radius;
-    //public LayerMask Enemies;
-    //public float damage_to_enemies;
 
     [Header("SFX")]
     private IPlayerSFX sfx;
@@ -176,14 +173,14 @@ public class Player_Movement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (IsDashing || IsLedgeGrabbing)
+        if (!canMove || IsDashing || IsLedgeGrabbing)
         {
             return;
         }
         float targetSpeed = moving_X * SpeedMove;
         if (isGrounded)
         {
-            rigid_bod.linearVelocity = new Vector2(moving_X * SpeedMove, rigid_bod.linearVelocity.y);
+            rigid_bod.linearVelocity = new Vector2(targetSpeed, rigid_bod.linearVelocity.y);
             jumpTakeoffSpeed = rigid_bod.linearVelocity.x;
         }
         else
@@ -211,14 +208,10 @@ public class Player_Movement : MonoBehaviour
     #region Updated Animation code
     private void UpdateAnimator()
     {
-        if (Input.GetMouseButtonDown(0) && !isAttacking)
-        {
-            Attack();
-        }
-
         animator.SetBool("IsGrounded", isGrounded);
         animator.SetFloat("VerticalSpeed", rigid_bod.linearVelocity.y);
         animator.SetFloat("IsRunning", Mathf.Abs(rigid_bod.linearVelocity.x));
+        animator.SetBool("IsSprinting", isSprinting && Mathf.Abs(rigid_bod.linearVelocity.x) > 0.1f);
         animator.SetBool("IsWallSliding", IsWallSliding);
         animator.SetBool("IsWallClinging", IsWallClinging);
     }
@@ -455,6 +448,7 @@ public class Player_Movement : MonoBehaviour
             Flip();
         }
     }
+
     void Flip()
     {
         facingRight = !facingRight;
@@ -545,28 +539,6 @@ public class Player_Movement : MonoBehaviour
         rigid_bod.gravityScale = originalGravity;
     }
     #endregion LedgeGrab
-
-    #region Attack Code Unfinished AS OF YET!
-    private void Attack()
-    {
-        isAttacking = true;
-        animator.SetBool("IsAttackings", true);
-    }
-    public void EnableAttackHitbox()
-    {
-        attackHitbox.SetActive(true);
-    }
-    public void DisableAttackHitbox()
-    {
-        attackHitbox.SetActive(false);
-        isAttacking = false;
-    }
-    //public void EndAttack()
-    //{
-    //    isAttacking = false;
-    //}
-
-    #endregion Attack Code Unfinished AS OF YET!
 
     #region After Images
     private void HandleSprintAfterimages()

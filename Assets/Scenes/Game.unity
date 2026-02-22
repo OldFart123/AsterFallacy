@@ -192,6 +192,10 @@ PrefabInstance:
       propertyPath: 'components.Array.data[0]'
       value: 
       objectReference: {fileID: 1576649176}
+    - target: {fileID: 6398938111209975883, guid: 5682018a710c3fb43bcfcd0bc5774e2f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8018986320793293820, guid: 5682018a710c3fb43bcfcd0bc5774e2f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.015429974
@@ -235,10 +239,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3516901838219073504, guid: 5682018a710c3fb43bcfcd0bc5774e2f, type: 3}
-      insertIndex: 5
-      addedObject: {fileID: 1428364499}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5682018a710c3fb43bcfcd0bc5774e2f, type: 3}
 --- !u!95 &108358687 stripped
 Animator:
@@ -310,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c22fd323bc9a43942af3dbcfa98a2a63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Healthbar
-  playerHealth: {fileID: 5108922301830274880}
+  playerHealth: {fileID: 9068034095829965122}
   totalhealthBar: {fileID: 450637649}
   currenthealthBar: {fileID: 564953579}
 --- !u!1 &282026480
@@ -2018,10 +2019,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 596045977}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1284beee134177d488f9d9f538444d3b, type: 3}
+  m_Script: {fileID: 11500000, guid: f123dbe23e9cc8f41842a902534ea79b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LootBox
-  maxHealth: 10
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 3
+  invincibleTime: 0
+  hurtSFX: {fileID: 0}
+  deathSFX: {fileID: 0}
+  anim: {fileID: 0}
 --- !u!1 &679846381
 GameObject:
   m_ObjectHideFlags: 0
@@ -9189,24 +9194,6 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
---- !u!1 &1054529874 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2097222760280278767, guid: e58bbbe2dda610545bc9783381228f49, type: 3}
-  m_PrefabInstance: {fileID: 3309573755537297188}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1054529879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1054529874}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1284beee134177d488f9d9f538444d3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LootBox
-  maxHealth: 10
 --- !u!1 &1062626760
 GameObject:
   m_ObjectHideFlags: 0
@@ -10642,24 +10629,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!1 &1428364493 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3516901838219073504, guid: 5682018a710c3fb43bcfcd0bc5774e2f, type: 3}
-  m_PrefabInstance: {fileID: 108358686}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1428364499
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1428364493}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1284beee134177d488f9d9f538444d3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LootBox
-  maxHealth: 10
 --- !u!1 &1509212583
 GameObject:
   m_ObjectHideFlags: 0
@@ -10896,15 +10865,15 @@ GameObject:
   m_Component:
   - component: {fileID: 1522914076}
   - component: {fileID: 1522914079}
-  - component: {fileID: 1522914080}
   - component: {fileID: 1522914077}
+  - component: {fileID: 1522914080}
   m_Layer: 0
   m_Name: HurtBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1522914076
 Transform:
   m_ObjectHideFlags: 0
@@ -10914,8 +10883,8 @@ Transform:
   m_GameObject: {fileID: 1522914075}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5508, y: -0.1565, z: 0}
-  m_LocalScale: {x: 1.0391, y: 3.1272001, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8638130676896965928}
@@ -10932,7 +10901,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba2b4de52dd35ad47aa5ed42ef43f0f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_Hit
-  HurtingSound: {fileID: 8300000, guid: 5fd0678c11dbe434698ac8c57c890f97, type: 3}
+  hurtingSound: {fileID: 8300000, guid: 690cd65ca69960742bedf1735cbd02c2, type: 3}
+  enemyKnockbackX: 2
+  enemyKnockbackY: 3
 --- !u!212 &1522914079
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -10991,8 +10962,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!60 &1522914080
-PolygonCollider2D:
+--- !u!61 &1522914080
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -11035,18 +11006,8 @@ PolygonCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -1.8881931, y: 0.41960624}
-      - {x: -2.272962, y: -0.1934742}
-      - {x: -1.0369543, y: -0.19365948}
-      - {x: -0.5532874, y: 0.15840572}
-      - {x: -0.53673315, y: -0.46969494}
-      - {x: 1.2372199, y: -0.46861038}
-      - {x: 1.2433434, y: 0.3998117}
-      - {x: 0.61144316, y: 0.5974396}
-      - {x: -0.71574503, y: 0.59425867}
-  m_UseDelaunayMesh: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &1524028069
 GameObject:
   m_ObjectHideFlags: 0
@@ -22679,7 +22640,7 @@ GameObject:
   - component: {fileID: 8638130676896965928}
   - component: {fileID: 9068034095829965119}
   - component: {fileID: 5522690255755669662}
-  - component: {fileID: 5108922301830274880}
+  - component: {fileID: 9068034095829965122}
   - component: {fileID: 683547837153136722}
   - component: {fileID: 9068034095829965120}
   - component: {fileID: 2230361429249322151}
@@ -22687,6 +22648,7 @@ GameObject:
   - component: {fileID: 5481233900038956061}
   - component: {fileID: 1207068901}
   - component: {fileID: 9068034095829965121}
+  - component: {fileID: 9068034095829965123}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -22769,10 +22731,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2097222760280278767, guid: e58bbbe2dda610545bc9783381228f49, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1054529879}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e58bbbe2dda610545bc9783381228f49, type: 3}
 --- !u!1001 &3814094780960640474
 PrefabInstance:
@@ -22786,10 +22745,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy_Bee
       objectReference: {fileID: 0}
-    - target: {fileID: 4572109356667706254, guid: 5682018a710c3fb43bcfcd0bc5774e2f, type: 3}
-      propertyPath: 'components.Array.data[0]'
-      value: 
-      objectReference: {fileID: 930209347}
     - target: {fileID: 8018986320793293820, guid: 5682018a710c3fb43bcfcd0bc5774e2f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.015429974
@@ -22914,26 +22869,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5108922301830274880
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2676525981362483611}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6279ad0dbc7b01049aea5250b52ad2c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Health
-  startingHealth: 5
-  iFramesDuration: 2
-  numberOfFlashes: 3
-  components:
-  - {fileID: 5522690255755669662}
-  - {fileID: 0}
-  DeathSound: {fileID: 8300000, guid: 459ca445216aa0d4686b4462d9ea7382, type: 3}
-  HurtSound: {fileID: 8300000, guid: 11d14b6c7a3dd2546ba9c151fd6532d3, type: 3}
 --- !u!114 &5481233900038956061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22968,6 +22903,7 @@ MonoBehaviour:
   Trails: {fileID: 1207068901}
   SpeedMove: 7
   JumpPower: 7.76
+  canMove: 1
   Dashing_Power: 10
   DashingTime: 0.2
   DashingCooldown: 1
@@ -22982,7 +22918,6 @@ MonoBehaviour:
   SprintJumpMultiplier: 1.14
   FallMultiplier: 2.5
   LowJumpMultiplier: 2
-  attackHitbox: {fileID: 1522914075}
   ledgeCheckHeight: 0.4
   ledgeClimbUp: 0.6
   airAcceleration: 7
@@ -23155,6 +23090,78 @@ MonoBehaviour:
   moneyText: {fileID: 1511388022}
   backgroundImage: {fileID: 363662145}
   CurrentMoney: 0
+--- !u!114 &9068034095829965122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2676525981362483611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 428941acf7642b8448cd08d6944aabdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  maxHealth: 5
+  invincibleTime: 2
+  knockbackForceX: 8
+  knockbackForceY: 6
+  knockbackDuration: 0.15
+  hurtSFX: {fileID: 8300000, guid: 11d14b6c7a3dd2546ba9c151fd6532d3, type: 3}
+  deathSFX: {fileID: 8300000, guid: 459ca445216aa0d4686b4462d9ea7382, type: 3}
+--- !u!114 &9068034095829965123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2676525981362483611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804983ed9cd020d4baaa531424781dd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  animator: {fileID: 5042569689052782086}
+  attackHitbox: {fileID: 1522914075}
+  movement: {fileID: 5522690255755669662}
+  comboResetTime: 1
+  maxCombo: 2
+  kickData:
+    size: {x: 1.75, y: 3}
+    offset: {x: 1, y: -0.215}
+    damage: 1
+    knockbackX: 2
+    knockbackY: 3
+  tailBashData:
+    size: {x: 3, y: 2.2}
+    offset: {x: 0.3, y: 0}
+    damage: 1
+    knockbackX: 3
+    knockbackY: 1.5
+  groundUpData:
+    size: {x: 1.25, y: 2.5}
+    offset: {x: -0.25, y: 1.9}
+    damage: 1
+    knockbackX: 0
+    knockbackY: 4
+  airUpData:
+    size: {x: 1.25, y: 2.25}
+    offset: {x: -0.25, y: 1.9}
+    damage: 1
+    knockbackX: 1
+    knockbackY: 2
+  airDownData:
+    size: {x: 1, y: 1.75}
+    offset: {x: -0.155, y: -1.25}
+    damage: 1
+    knockbackX: 1
+    knockbackY: -2
+  airForwardData:
+    size: {x: 2.25, y: 1.5}
+    offset: {x: 0.9, y: 0}
+    damage: 1
+    knockbackX: 3
+    knockbackY: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

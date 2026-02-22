@@ -1,5 +1,9 @@
+using UnityEngine;
 public interface IDamagable
 {
-    public void Damage(int dmg);
-    public int Health{get; set;}
+    void Damage(int dmg);
+    void Damage(int dmg, Transform attacker);
+    int Health { get; }
+    int MaxHealth { get; }
+    void Heal(int amount);
 }

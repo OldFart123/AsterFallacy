@@ -27,47 +27,82 @@ public class EnemyPatrol : MonoBehaviour
     }
     private void OnDisable()
     {
-        anim.SetBool("Moving", false);
+        if (anim != null)
+        {
+            anim.SetBool("Moving", false);
+        }
     }
+
 
     private void Update()
     {
+        if (!IsValid())
+        {
+            return;
+        }
+
         if (movingLeft)
         {
             if (enemy.position.x >= leftEdge.position.x)
+            {
                 MoveInDirection(-1);
+            }
             else
+            {
                 DirectionChange();
+            }
         }
         else
         {
             if (enemy.position.x <= rightEdge.position.x)
+            {
                 MoveInDirection(1);
+            }
             else
+            {
                 DirectionChange();
+            }
         }
     }
 
+
     private void DirectionChange()
     {
-        anim.SetBool("Moving", false);
+        if (anim != null)
+        {
+            anim.SetBool("Moving", false);
+        }
+
         idleTimer += Time.deltaTime;
 
         if (idleTimer > idleDuration)
+        {
             movingLeft = !movingLeft;
+        }
+    }
+    private bool IsValid()
+    {
+        if (enemy == null || leftEdge == null || rightEdge == null)
+        {
+            enabled = false;
+            return false;
+        }
+
+        return true;
     }
 
     private void MoveInDirection(int _direction)
     {
         idleTimer = 0;
-        anim.SetBool("Moving", true);
+        if (anim != null)
+        {
+            anim.SetBool("Moving", true);
+        }
 
         //Make enemy face direction
-        enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction,
-            initScale.y, initScale.z);
+        enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction, initScale.y, initScale.z);
 
         //Move in that direction
-        enemy.position = new Vector3(enemy.position.x + Time.deltaTime * _direction * speed,
-            enemy.position.y, enemy.position.z);
+        enemy.position = new Vector3(enemy.position.x + Time.deltaTime * _direction * speed, enemy.position.y, enemy.position.z);
     }
 }

@@ -4,18 +4,18 @@ public class PlayerRespawn : MonoBehaviour
 {
     [SerializeField] private AudioClip checkpoint;
     private Transform currentCheckpoint;
-    private Health playerHealth;
+    private CharacterHealth playerHealth;
     private UIManager uiMang;
 
     private void Awake()
     {
-        playerHealth = GetComponent<Health>();
+        playerHealth = GetComponent<CharacterHealth>();
         uiMang = Object.FindFirstObjectByType<UIManager>();
     }
 
     public void CheckRespawn()
     {
-        if(currentCheckpoint == null)
+        if (currentCheckpoint == null)
         {
             uiMang.GameOver();
             return;
@@ -24,8 +24,11 @@ public class PlayerRespawn : MonoBehaviour
         playerHealth.Respawn();
         transform.position = currentCheckpoint.position;
 
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        rb.linearVelocity = Vector2.zero;
         //Camera.main.GetComponent<CameraController>().MoveToNewRoom(currentCheckpoint.parent);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "CheckPoint")

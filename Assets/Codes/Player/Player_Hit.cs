@@ -1,17 +1,79 @@
-using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Player_Hit : MonoBehaviour
 {
-    [SerializeField] private AudioClip HurtingSound;
+    [Header("Audio")]
+    [SerializeField] private AudioClip hurtingSound;
+
+    [Header("Default Knockback (can be overridden)")]
+    [SerializeField] private float enemyKnockbackX = 6f;
+    [SerializeField] private float enemyKnockbackY = 3f;
+
+    private float currentDamage = 1f;
+    private float currentKnockbackX;
+    private float currentKnockbackY;
+    private float facingDirection = 1f;
+
+    private HashSet<IDamagable> hitTargets = new HashSet<IDamagable>();
+
+    private void Awake()
+    {
+        currentKnockbackX = enemyKnockbackX;
+        currentKnockbackY = enemyKnockbackY;
+    }
+
+    private void OnEnable()
+    {
+        hitTargets.Clear();
+    }
+
+    //Called by PlayerCombat before enabling the hitbox.
+    public void SetAttackValues(float damage, float knockbackX, float knockbackY, float direction)
+    {
+        currentDamage = damage;
+        currentKnockbackX = knockbackX;
+        currentKnockbackY = knockbackY;
+        facingDirection = direction;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<IDamagable>() != null)
-        {
-            collision.gameObject.GetComponent<IDamagable>().Damage(1);
-            SoundManager.instance.PlaySound(HurtingSound);
+        IDamagable target = collision.GetComponent<IDamagable>();
 
-            //Debug.Log("Hitting");
+        if (target == null)
+        {
+            return;
+        }
+
+        if (target.Health <= 0)
+        {
+            return;
+        }
+
+        if (hitTargets.Contains(target))
+        {
+            return;
+        }
+
+        hitTargets.Add(target);
+
+        //Apply damage
+        target.Damage((int)currentDamage, transform.root);
+
+        //Apply knockback if enemy has EnemyHealth, but doesn't work most of the time because it need the enemy to have gravity so we just roll lol
+        EnemyHealth enemy = collision.GetComponent<EnemyHealth>();
+        if (enemy != null)
+        {
+            Vector2 knockbackForce = new Vector2(facingDirection * currentKnockbackX, currentKnockbackY);
+
+            enemy.ApplyKnockback(knockbackForce);
+        }
+
+        //Play hit sound
+        if (hurtingSound != null && SoundManager.instance != null)
+        {
+            SoundManager.instance.PlaySound(hurtingSound);
         }
     }
 }

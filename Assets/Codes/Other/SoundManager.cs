@@ -26,6 +26,11 @@ public class SoundManager : MonoBehaviour
     }
     public void PlaySound(AudioClip _sound)
     {
+        if (_sound == null)
+        {
+            return;
+        }
+
         source.PlayOneShot(_sound);
     }
     public void ChangeSoundVolume(float _change)

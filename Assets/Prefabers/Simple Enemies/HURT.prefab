@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1492309319084112556}
   - component: {fileID: 6459145188203604368}
   - component: {fileID: 2808860705359252356}
+  - component: {fileID: 1659146992489823262}
   m_Layer: 11
   m_Name: HURT
   m_TagString: Untagged
@@ -81,8 +82,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 150974794, guid: 8406fd029187a1f45a80049e3a86e357, type: 3}
+  m_Color: {r: 1, g: 0.6087409, b: 0.4117647, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -129,7 +130,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.21133333}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
+    pivot: {x: 0.5, y: 0.4}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -153,3 +154,19 @@ MonoBehaviour:
   movementDistance: 2
   speed: 2
   damage: 1
+--- !u!114 &1659146992489823262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097222760280278767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f123dbe23e9cc8f41842a902534ea79b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 2
+  invincibleTime: 0
+  hurtSFX: {fileID: 0}
+  deathSFX: {fileID: 0}

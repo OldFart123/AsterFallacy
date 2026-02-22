@@ -9,8 +9,12 @@ public class HealthCollectible : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            SoundManager.instance.PlaySound(PickUpSound);   
-            collision.GetComponent<Health>().AddHealth(healthValue);
+            SoundManager.instance.PlaySound(PickUpSound);
+            IDamagable target = collision.GetComponent<IDamagable>();
+            if (target != null)
+            {
+                target.Heal((int)healthValue);
+            }
             gameObject.SetActive(false);
         }
     }

@@ -19,7 +19,7 @@ public class MeleeEnemy : MonoBehaviour
     [SerializeField] private AudioClip AttackSound;
 
     private Animator anim;
-    private Health playerHealth;
+    private PlayerHealth playerHealth;
     private EnemyPatrol enemyPatrol;
 
     private void Awake()
@@ -35,7 +35,7 @@ public class MeleeEnemy : MonoBehaviour
         //Attack only when player in sight?
         if (PlayerInSight())
         {
-            if (cooldownTimer >= attackCooldown && playerHealth.currentHealth > 0)
+            if (cooldownTimer >= attackCooldown && playerHealth.Health > 0)
             {
                 cooldownTimer = 0;
                 anim.SetTrigger("MelAttack");
@@ -44,7 +44,9 @@ public class MeleeEnemy : MonoBehaviour
         }
 
         if (enemyPatrol != null)
+        {
             enemyPatrol.enabled = !PlayerInSight();
+        }
     }
 
     private bool PlayerInSight()
@@ -52,7 +54,9 @@ public class MeleeEnemy : MonoBehaviour
         RaycastHit2D hit = Physics2D.BoxCast(boxCollider.bounds.center + transform.right * range * transform.localScale.x * colliderDistance, new Vector3(boxCollider.bounds.size.x * range, boxCollider.bounds.size.y, boxCollider.bounds.size.z), 0, Vector2.left, 0, playerLayer);
 
         if (hit.collider != null)
-            playerHealth = hit.transform.GetComponent<Health>();
+        {
+            playerHealth = hit.transform.GetComponent<PlayerHealth>();
+        }
 
         return hit.collider != null;
     }
@@ -65,6 +69,8 @@ public class MeleeEnemy : MonoBehaviour
     private void DamagePlayer()
     {
         if (PlayerInSight())
-            playerHealth.TakeDamage(damage);
+        {
+            playerHealth.Damage(damage);
+        }
     }
 }

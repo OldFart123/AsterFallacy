@@ -24,7 +24,9 @@ public class Enemy_Sideways : MonoBehaviour
                 transform.position = new Vector3(transform.position.x - speed * Time.deltaTime, transform.position.y, transform.position.z);
             }
             else
+            {
                 movingLeft = false;
+            }
         }
         else
         {
@@ -33,7 +35,9 @@ public class Enemy_Sideways : MonoBehaviour
                 transform.position = new Vector3(transform.position.x + speed * Time.deltaTime, transform.position.y, transform.position.z);
             }
             else
+            {
                 movingLeft = true;
+            }
         }
     }
 
@@ -41,7 +45,7 @@ public class Enemy_Sideways : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            collision.GetComponent<Health>().TakeDamage(damage);
+            collision.GetComponent<PlayerHealth>().Damage((int)damage);
         }
     }
 }

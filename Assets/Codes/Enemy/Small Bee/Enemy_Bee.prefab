@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 8446161582869438556}
   - component: {fileID: 349333585173374689}
   - component: {fileID: 1321291943178217664}
-  - component: {fileID: 4572109356667706254}
   - component: {fileID: 6398938111209975883}
+  - component: {fileID: 1785201565269120076}
   m_Layer: 11
   m_Name: Enemy_Bee
   m_TagString: Enemy
@@ -176,7 +176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemy
   attackCooldown: 1
-  range: 1.5
+  range: 1.75
   damage: 1
   colliderDistance: 0.5
   boxCollider: {fileID: 349333585173374689}
@@ -184,27 +184,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   AttackSound: {fileID: 8300000, guid: 614f49d628138d540b316e298fc7fd22, type: 3}
---- !u!114 &4572109356667706254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3516901838219073504}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6279ad0dbc7b01049aea5250b52ad2c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Health
-  startingHealth: 3
-  iFramesDuration: 0
-  numberOfFlashes: 0
-  components:
-  - {fileID: 0}
-  - {fileID: 1321291943178217664}
-  - {fileID: 6398938111209975883}
-  DeathSound: {fileID: 8300000, guid: 5fca240a0efe2b445a6d5221bb90f82c, type: 3}
-  HurtSound: {fileID: 8300000, guid: 5570a196f47ede6489019c26e6917702, type: 3}
 --- !u!114 &6398938111209975883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,3 +197,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDamage
   damage: 1
+--- !u!114 &1785201565269120076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3516901838219073504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f123dbe23e9cc8f41842a902534ea79b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 4
+  invincibleTime: 0
+  hurtSFX: {fileID: 8300000, guid: 5570a196f47ede6489019c26e6917702, type: 3}
+  deathSFX: {fileID: 8300000, guid: 5fca240a0efe2b445a6d5221bb90f82c, type: 3}
+  anim: {fileID: 8446161582869438556}
+  deathDelay: 0.5
