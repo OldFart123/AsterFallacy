@@ -32,7 +32,6 @@ public class PlayerHealth : CharacterHealth
         {
             return;
         }
-        playerCombat.MarkAsHurt();
 
         anim.SetTrigger("Hurt");
         SoundManager.instance.PlaySound(hurtSFX);
@@ -42,6 +41,7 @@ public class PlayerHealth : CharacterHealth
             StartCoroutine(KnockbackRoutine(lastAttacker));
         }
 
+        playerCombat.cannotAttack = false;
         StartCoroutine(HitPause(0.2f));
     }
 
@@ -82,6 +82,7 @@ public class PlayerHealth : CharacterHealth
     private IEnumerator KnockbackRoutine(Transform attacker)
     {
         movement.canMove = false;
+        playerCombat.cannotAttack = false;
         float direction = transform.position.x < attacker.position.x ? -1f : 1f;
 
         rb.linearVelocity = new Vector2(direction * knockbackForceX, knockbackForceY);
@@ -90,15 +91,6 @@ public class PlayerHealth : CharacterHealth
 
         rb.linearVelocity = Vector2.zero;
         movement.canMove = true;
-    }
-    public void MarkAsHurt()
-    {
-        playerCombat.DisableHitbox();
-        //movement.canMove = false;
-    }
-    public void ResetHurtState()
-    {
-        playerCombat.ResetHurtState();
-        movement.canMove = true;
+        playerCombat.cannotAttack = true;
     }
 }

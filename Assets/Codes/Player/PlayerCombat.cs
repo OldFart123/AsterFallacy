@@ -15,7 +15,7 @@ public class PlayerCombat : MonoBehaviour
     private float comboTimer;
     private bool isAttacking;
     private bool attackQueued;
-    private bool isHurt;
+    public bool cannotAttack = false;
 
     private Player_Hit hitbox;
     private BoxCollider2D hitboxCollider;
@@ -52,22 +52,21 @@ public class PlayerCombat : MonoBehaviour
 
     private void Update()
     {
-        if (isHurt)
-        {
-            return;
-        }
 
         if (Input.GetMouseButtonDown(0))
         {
+            Debug.Log("Mousebutton down");
             TryAttack();
         }
 
         if (comboTimer > 0)
         {
+            Debug.Log("combo timer");
             comboTimer -= Time.deltaTime;
         }
         else
         {
+            Debug.Log("combo be 0 if anything");
             comboStep = 0;
         }
     }
@@ -75,34 +74,45 @@ public class PlayerCombat : MonoBehaviour
     {
         if (movement == null)
         {
+            Debug.Log("movement bye bye");
             return true;
         }
 
         if (!movement.canMove)
         {
+            Debug.Log("cannot attack if unable to attack");
             return true;
         }
 
         if (movement.IsCurrentlyDashing)
         {
+            Debug.Log("cannot attack if dashing");
             return true;
         }
 
         if (movement.IsCurrentlyLedgeGrabbing)
         {
+            Debug.Log("cannot attack if ledge grabbing");
             return true;
         }
 
         if (movement.IsCurrentlyWallClinging)
         {
+            Debug.Log("cannot attack if wall clinging");
             return true;
         }
 
         if (movement.IsCurrentlyWallSliding)
         {
+            Debug.Log("cannot attack if wall sliding");
             return true;
         }
-
+        if (!cannotAttack)
+        {
+            Debug.Log("cannot attack if hurt :)");
+            return true;
+        }
+        Debug.Log("cannot START attack");
         return false;
     }
 
@@ -110,21 +120,25 @@ public class PlayerCombat : MonoBehaviour
     {
         if (isAttacking)
         {
+            Debug.Log("if isattackuing");
             attackQueued = true;
             {
+                Debug.Log("returned attack que");
                 return;
             }
         }
         if (CannotStartAttack())
         {
+            Debug.Log("returned cannot start attack");
             return;
         }
-
+        Debug.Log("trying to attack");
         StartAttack();
     }
 
     private void StartAttack()
     {
+        Debug.Log("Start attack");
         bool grounded = movement.IsGroundedPublicated;
         float vertical = Input.GetAxisRaw("Vertical");
 
@@ -132,36 +146,44 @@ public class PlayerCombat : MonoBehaviour
 
         if (grounded)
         {
+            Debug.Log("grounded shit");
             if (vertical > 0.5f)
             {
-                attackType = 1; // Ground Up
+                Debug.Log("ground up");
+                attackType = 1; //Ground Up
                 comboStep = 0;
             }
             else
             {
-                attackType = 0; // Ground combo
+                Debug.Log("Ground combo");
+                attackType = 0; //Ground combo
                 comboStep++;
                 if (comboStep > maxCombo)
                 {
+                    Debug.Log("if over max combo");
                     comboStep = 1;
                 }
             }
         }
         else
         {
+            Debug.Log("else for air");
             comboStep = 0;
 
             if (vertical > 0.5f)
             {
+                Debug.Log("air up");
                 attackType = 3; //Air Up
             }
             else if (vertical < -0.5f)
             {
+                Debug.Log("air down");
                 attackType = 4; //Air Down
             }
             else
             {
-                attackType = 2; //Air Forward / Neutral
+                Debug.Log("air forward");
+                attackType = 2; //Air Forward
             }
         }
 
@@ -177,10 +199,12 @@ public class PlayerCombat : MonoBehaviour
     //Mostly just animation even nonsense this plays at the last frame of an attack unless you want everything to break sighhh
     public void EndAttack()
     {
+        Debug.Log("End attack");
         isAttacking = false;
 
         if (attackQueued)
         {
+            Debug.Log("End attack Que");
             attackQueued = false;
             StartAttack();
         }
@@ -291,6 +315,7 @@ public class PlayerCombat : MonoBehaviour
     
     private void ActivateHitbox(AttackData data)
     {
+        Debug.Log("Activate HitBox");
         //Resize collider for shit hoooolllyy I'm tired
         hitboxCollider.size = data.size;
 
@@ -310,13 +335,5 @@ public class PlayerCombat : MonoBehaviour
         hitbox.SetAttackValues(data.damage, data.knockbackX, data.knockbackY, facingDirection);
 
         attackHitbox.SetActive(true);
-    }
-    public void MarkAsHurt()
-    {
-        isHurt = true;
-    }
-    public void ResetHurtState()
-    {
-        isHurt = false;
     }
 }
