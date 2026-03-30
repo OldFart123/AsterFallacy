@@ -61,6 +61,26 @@ public class Player_Hit : MonoBehaviour
         //Apply damage
         target.Damage((int)currentDamage, transform.root);
 
+        //Pogo, air kick down to cancel damage
+        Player_Movement movement = GetComponentInParent<Player_Movement>();
+        Rigidbody2D playerRB = movement.GetComponent<Rigidbody2D>();
+
+        Collider2D playerCol = movement.GetComponent<Collider2D>();
+        Collider2D enemyCol = collision.GetComponent<Collider2D>();
+
+        bool falling = playerRB.linearVelocity.y < 0f;
+
+        //Player bottom must be above enemy top (tee-hee)
+        bool aboveEnemy = playerCol.bounds.min.y >= enemyCol.bounds.max.y - 0.05f;
+
+        //Player must overlap horizontally with enemy center (prevents a side pogo so it's less stupid)
+        bool horizontallyCentered = playerCol.bounds.center.x > enemyCol.bounds.min.x && playerCol.bounds.center.x < enemyCol.bounds.max.x;
+
+        if (falling && aboveEnemy && horizontallyCentered)
+        {
+            movement.PogoBounce();
+        }
+
         //Apply knockback if enemy has EnemyHealth, but doesn't work most of the time because it need the enemy to have gravity so we just roll lol
         EnemyHealth enemy = collision.GetComponent<EnemyHealth>();
         if (enemy != null)

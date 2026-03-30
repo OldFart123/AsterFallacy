@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - CheckPoint
   - Enemy
+  - MoneyUI
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Wall
   - Player
   - Slope
-  - 
+  - MoneyUI
   - 
   - 
   - 
@@ -51,8 +52,17 @@ TagManager:
   - name: Cloud
     uniqueID: 2126098493
     locked: 0
+  - name: Platform
+    uniqueID: 3893796047
+    locked: 0
+  - name: Others
+    uniqueID: 1458601369
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: upper Others
+    uniqueID: 1001009683
     locked: 0
   - name: ForeGround
     uniqueID: 990467317

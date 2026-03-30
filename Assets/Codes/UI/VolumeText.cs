@@ -12,13 +12,13 @@ public class VolumeText : MonoBehaviour
     {
         txt = GetComponent<TextMeshProUGUI>();
     }
-    private void Update()
-    {
-        UpdateVolume();
-    }
     private void UpdateVolume()
     {
         float volumeValue = PlayerPrefs.GetFloat(volumeName) * 100;
         txt.text = textIntro + volumeValue.ToString();
+    }
+    void OnEnable()
+    {
+        UpdateVolume();
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
@@ -21,6 +20,12 @@ public class Player_Movement : MonoBehaviour
     private float moving_X;
     public bool canMove = true;
 
+    private bool isAutoWalking;
+    private float autoWalkTimer;
+    private Vector2 autoWalkDirection;
+
+    private PlayerSlopeHandler slopeHandler;
+
     [Header("Dashing")]
     public float Dashing_Power = 10f;
     public float DashingTime = 0.2f;
@@ -28,7 +33,6 @@ public class Player_Movement : MonoBehaviour
     private bool CanDash = true;
     private bool IsDashing;
     public bool IsCurrentlyDashing => IsDashing;
-
 
     [Header("Sprinting")]
     public float SprintSpeed = 10f;
@@ -59,7 +63,6 @@ public class Player_Movement : MonoBehaviour
     private float WallJumpingDuration = 0.2f;
     private bool IsWallJumping;
     public Vector2 WallJumping_Power = new Vector2(1.5f, 7f);
-
 
     [Header("Jump Height")]
     [Range(0.1f, 1f)]
@@ -116,7 +119,9 @@ public class Player_Movement : MonoBehaviour
     private bool IsLedgeGrabbing;
     private Vector2 ledgePos;
     private float originalGravity;
-    private float jumpMomentum;
+
+    [Header("Pogo Bounce")]
+    [SerializeField] private float pogoBounceForce = 5f;
 
     [Header("Sprint Afterimages")]
     [SerializeField] private Clones afterimagePrefab;
@@ -138,6 +143,7 @@ public class Player_Movement : MonoBehaviour
         animator = GetComponent<Animator>();
         BoxColli = GetComponent<BoxCollider2D>();
         sfx = GetComponent<IPlayerSFX>();
+        slopeHandler = GetComponent<PlayerSlopeHandler>();
 
         baseMoveSpeed = SpeedMove;
         airMaxSpeed = SprintSpeed * 1.1f;
@@ -146,6 +152,12 @@ public class Player_Movement : MonoBehaviour
 
     void Update()
     {
+        if (GameState.GameplayBlocked || !canMove)
+        {
+            rigid_bod.linearVelocity = new Vector2(0, rigid_bod.linearVelocity.y);
+            return;
+        }
+
         moving_X = Input.GetAxis("Horizontal");
         isGrounded = CheckGrounded();
 
@@ -177,23 +189,45 @@ public class Player_Movement : MonoBehaviour
         {
             return;
         }
+
+        if (isAutoWalking)
+        {
+            rigid_bod.linearVelocity = new Vector2(autoWalkDirection.x * SpeedMove, rigid_bod.linearVelocity.y);
+
+            autoWalkTimer -= Time.fixedDeltaTime;
+
+            if (autoWalkTimer <= 0f)
+            {
+                isAutoWalking = false;
+                canMove = true;
+            }
+
+            return;
+        }
+
         float targetSpeed = moving_X * SpeedMove;
+
         if (isGrounded)
         {
-            rigid_bod.linearVelocity = new Vector2(targetSpeed, rigid_bod.linearVelocity.y);
             jumpTakeoffSpeed = rigid_bod.linearVelocity.x;
+
+            if (slopeHandler.IsOnSlope)
+            {
+                slopeHandler.HandleSlopeMovement(targetSpeed, true);
+            }
+            else
+            {
+                rigid_bod.linearVelocity = new Vector2(targetSpeed, rigid_bod.linearVelocity.y);
+            }
         }
         else
         {
             float speedDiff = targetSpeed - rigid_bod.linearVelocity.x;
             float accel = airAcceleration * Time.fixedDeltaTime;
-
             float movement = Mathf.Clamp(speedDiff, -accel, accel);
-            //float movement = speedDiff > 0 ? accel : 0f; breaks walljumping, but feels SOOOO good.
 
             rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x + movement, rigid_bod.linearVelocity.y);
         }
-
         ApplyBetterGravity();
 
         if (isGrounded)
@@ -201,7 +235,6 @@ public class Player_Movement : MonoBehaviour
             ResetWallState();
         }
     }
-
 
     #endregion The Basic Three Codes
 
@@ -217,7 +250,7 @@ public class Player_Movement : MonoBehaviour
     }
     #endregion Updated Animation code
 
-    #region Jump, HandleMovement and BetterGravity
+    #region Jump, HandleMovement, Pogo and BetterGravity
     private void HandleJumpInput()
     {
         if (Input.GetButtonDown("Jump") && isGrounded)
@@ -243,6 +276,17 @@ public class Player_Movement : MonoBehaviour
 
         TryLedgeGrab();
     }
+    public void PogoBounce()
+    {
+        float bounce = pogoBounceForce;
+
+        if (Input.GetButton("Jump"))
+        {
+            bounce *= 1.1f; //Stronger bounce if holding jump
+        }
+
+        rigid_bod.linearVelocity = new Vector2(rigid_bod.linearVelocity.x, bounce);
+    }
     private void ApplyBetterGravity()
     {
         if (rigid_bod.linearVelocity.y < 0)
@@ -254,7 +298,7 @@ public class Player_Movement : MonoBehaviour
             rigid_bod.linearVelocity += Vector2.up * Physics2D.gravity.y * (LowJumpMultiplier - 1) * Time.fixedDeltaTime;
         }
     }
-    #endregion Jump, HandleMovement and BetterGravity
+    #endregion Jump, HandleMovement, Pogo and BetterGravity
 
     #region Dash and Sprint
     private void HandleDashOrSprint()
@@ -540,7 +584,7 @@ public class Player_Movement : MonoBehaviour
     }
     #endregion LedgeGrab
 
-    #region After Images
+    #region After Images and AutoWalk
     private void HandleSprintAfterimages()
     {
         if (!isSprinting || Mathf.Abs(rigid_bod.linearVelocity.x) < 0.2f)
@@ -565,13 +609,53 @@ public class Player_Movement : MonoBehaviour
 
         img.Init(playerSprite.sprite, transform.localScale, afterimageColor);
     }
-    #endregion After Images
+
+    public void StartAutoWalk(Vector2 direction, float duration)
+    {
+        isAutoWalking = true;
+        canMove = false;
+        autoWalkDirection = direction.normalized;
+        autoWalkTimer = duration;
+    }
+
+    public void AutoWalkTo(Vector3 target, float speed)
+    {
+        StartCoroutine(AutoWalkRoutine(target, speed));
+    }
+
+    IEnumerator AutoWalkRoutine(Vector3 target, float speed)
+    {
+        canMove = false;
+
+        while (Vector2.Distance(transform.position, target) > 0.1f)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, target, speed * Time.unscaledDeltaTime);
+            yield return null;
+        }
+
+        canMove = true;
+    }
+    public void StopAutoWalk()
+    {
+        isAutoWalking = false;
+        canMove = true;
+    }
+    #endregion After Images and AutoWalk
 
     #region Raycasts
-
     private bool CheckGrounded()
     {
-        return Physics2D.Raycast(transform.position, Vector2.down, playerHalfHeight + 0.1f, LayerMask.GetMask("Ground"));
+        Bounds bounds = BoxColli.bounds;
+
+        Vector2 leftOrigin = new Vector2(bounds.min.x + 0.05f, bounds.min.y);
+        Vector2 rightOrigin = new Vector2(bounds.max.x - 0.05f, bounds.min.y);
+
+        float rayLength = 0.3f;
+
+        bool leftGround = Physics2D.Raycast(leftOrigin, Vector2.down, rayLength, GroundLayer);
+        bool rightGround = Physics2D.Raycast(rightOrigin, Vector2.down, rayLength, GroundLayer);
+
+        return leftGround || rightGround;
     }
     private void OnDrawGizmosSelected()
     {

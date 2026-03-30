@@ -9,7 +9,6 @@ public class EnemyDamage : MonoBehaviour
         if (target != null)
         {
             target.Damage((int)damage, transform);
-
         }
     }
 }

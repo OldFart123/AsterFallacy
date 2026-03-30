@@ -21,12 +21,17 @@ public class CharacterHealth : MonoBehaviour, IDamagable
     // Standard damage
     public virtual void Damage(int dmg)
     {
-        if (isInvincible || Health <= 0) return;
+        if (isInvincible || Health <= 0)
+        {
+            return;
+        }
 
         Health -= dmg;
 
         if (Health <= 0)
+        {
             Die();
+        }
         else
         {
             StartCoroutine(Invincibility());
@@ -48,7 +53,7 @@ public class CharacterHealth : MonoBehaviour, IDamagable
         Destroy(gameObject);
     }
 
-    public void Heal(int amount)
+    public virtual void Heal(int amount)
     {
         Health = Mathf.Clamp(Health + amount, 0, MaxHealth);
     }

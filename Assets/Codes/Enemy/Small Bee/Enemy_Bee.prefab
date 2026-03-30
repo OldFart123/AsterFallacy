@@ -81,8 +81,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1458601369
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: -6661652535865234613, guid: 5ff3a0eefd6744d41904d7e21abe3fcb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -214,4 +214,3 @@ MonoBehaviour:
   hurtSFX: {fileID: 8300000, guid: 5570a196f47ede6489019c26e6917702, type: 3}
   deathSFX: {fileID: 8300000, guid: 5fca240a0efe2b445a6d5221bb90f82c, type: 3}
   anim: {fileID: 8446161582869438556}
-  deathDelay: 0.5

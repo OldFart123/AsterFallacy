@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8316066287537928194}
   - component: {fileID: 2854865084115977495}
   - component: {fileID: 6796635285474326646}
+  - component: {fileID: 9107373558295982004}
   m_Layer: 0
   m_Name: Money Honey
   m_TagString: Untagged
@@ -78,8 +79,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1458601369
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: -5737582769611160922, guid: 87871bd565df6e843962f9e05e82f0fd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -142,3 +143,16 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.45
+--- !u!114 &9107373558295982004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4885042530716243675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ae3cbfdac9c0904292be3371e319713, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PersistentID
+  uniqueID: 

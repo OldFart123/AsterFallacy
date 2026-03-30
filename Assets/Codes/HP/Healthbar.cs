@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Healthbar : MonoBehaviour
@@ -7,17 +8,24 @@ public class Healthbar : MonoBehaviour
     [SerializeField] private Image totalhealthBar;
     [SerializeField] private Image currenthealthBar;
 
-    private void Start()
+    void Start()
     {
+        if (playerHealth == null && PlayerPersistence.Instance != null)
+        {
+            playerHealth = PlayerPersistence.Instance.GetComponent<CharacterHealth>();
+        }
+
         totalhealthBar.fillAmount = 0.5f;
-        UpdateHealthBar();
     }
-
-    private void Update()
+    private void LateUpdate()
     {
+        if (playerHealth == null && PlayerPersistence.Instance != null)
+        {
+            playerHealth = PlayerPersistence.Instance.GetComponent<CharacterHealth>();
+        }
+
         UpdateHealthBar();
     }
-
     private void UpdateHealthBar()
     {
         currenthealthBar.fillAmount = (float)playerHealth.Health / playerHealth.MaxHealth / 2;

@@ -41,9 +41,9 @@ public class PlayerCombat : MonoBehaviour
 
     private void Awake()
     {
-        if(movement == null)
+        if (movement == null)
         {
-        movement = GetComponent<Player_Movement>();
+            movement = GetComponent<Player_Movement>();
         }
         hitbox = attackHitbox.GetComponent<Player_Hit>();
         hitboxCollider = attackHitbox.GetComponent<BoxCollider2D>();
@@ -52,7 +52,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void Update()
     {
-        if (isHurt)
+        if (GameState.GameplayBlocked)
         {
             return;
         }
@@ -69,6 +69,11 @@ public class PlayerCombat : MonoBehaviour
         else
         {
             comboStep = 0;
+        }
+        //If movement is disabled mid attack, cancel attack and force reset
+        if (isAttacking && CannotStartAttack())
+        {
+            ForceResetAttack();
         }
     }
     private bool CannotStartAttack()
@@ -134,12 +139,12 @@ public class PlayerCombat : MonoBehaviour
         {
             if (vertical > 0.5f)
             {
-                attackType = 1; // Ground Up
+                attackType = 1; //Ground Up
                 comboStep = 0;
             }
             else
             {
-                attackType = 0; // Ground combo
+                attackType = 0; //Ground combo
                 comboStep++;
                 if (comboStep > maxCombo)
                 {
@@ -161,7 +166,7 @@ public class PlayerCombat : MonoBehaviour
             }
             else
             {
-                attackType = 2; //Air Forward / Neutral
+                attackType = 2; //Air Forward
             }
         }
 
@@ -184,6 +189,17 @@ public class PlayerCombat : MonoBehaviour
             attackQueued = false;
             StartAttack();
         }
+    }
+    public void ForceResetAttack()
+    {
+        isAttacking = false;
+        attackQueued = false;
+        comboStep = 0;
+        comboTimer = 0f;
+
+        attackHitbox.SetActive(false);
+
+        animator.ResetTrigger("Attack");
     }
     #region Animation Event shit
     public void EnableKick()
@@ -288,35 +304,31 @@ public class PlayerCombat : MonoBehaviour
     }
 #endif
     #endregion gizmo see
-    
+
     private void ActivateHitbox(AttackData data)
     {
+        //Debug.Log("Hitbox Offset: " + hitboxCollider.offset);
+
         //Resize collider for shit hoooolllyy I'm tired
-        hitboxCollider.size = data.size;
+        //hitboxCollider.size = data.size;
 
         //Flip offset based on the player's current facing direction
-        Vector2 offset = data.offset;
+        //Vector2 offset = data.offset;
 
         //Check if the player is facing right or left based on the player's localScale.x
+        //float facingDirection = Mathf.Sign(transform.localScale.x);
         float facingDirection = Mathf.Sign(transform.localScale.x);
 
         //Multiply the offset by the facing direction
-        offset.x *= facingDirection;
+        //offset.x *= facingDirection;
 
         //Apply the offset to the hitbox collider
-        hitboxCollider.offset = offset;
+        //hitboxCollider.offset = offset;
+        hitboxCollider.offset = data.offset;
 
         //Pass attack values to Player_Hit
         hitbox.SetAttackValues(data.damage, data.knockbackX, data.knockbackY, facingDirection);
 
         attackHitbox.SetActive(true);
-    }
-    public void MarkAsHurt()
-    {
-        isHurt = true;
-    }
-    public void ResetHurtState()
-    {
-        isHurt = false;
     }
 }
