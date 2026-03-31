@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36c3b15dae223394db48d9e2a233053a, type: 3}
+  m_Name: Test_Ant Dialog 1
+  m_EditorClassIdentifier: Assembly-CSharp::NPC_Dialogue
+  npcName: Test_Ant
+  lines:
+  - text: What?
+    portrait: {fileID: -6513809436837049387, guid: ca889a17955608c4ea4253de4b548330, type: 3}
+  - text: I'm just Testing here.
+    portrait: {fileID: -197110198, guid: 8406fd029187a1f45a80049e3a86e357, type: 3}
+  - text: ...
+    portrait: {fileID: 3948115927587391712, guid: 4bcc409f342a90b4c9e149f5aa4ceca0, type: 3}
+  - text: Did you try pressing something called "Tab"?
+    portrait: {fileID: 4243927867023665446, guid: 974abfff2dfa3cd4cb043f09d9c6dccf, type: 3}
+  typingSpeed: 0.05
+  talkSound: {fileID: 8300000, guid: 8cec6fb381634fb47ad0f4a9c5b9a9e6, type: 3}
+  choices: []

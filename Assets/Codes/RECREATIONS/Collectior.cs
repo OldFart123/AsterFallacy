@@ -24,5 +24,6 @@ public class Collectior : MonoBehaviour
 
         UIManager.Instance?.UpdateMoney(CurrentMoney);
         UIManager.Instance?.ShowMoney(); //trigger fade
+        UIManager.Instance?.RefreshInventoryMoney();
     }
 }

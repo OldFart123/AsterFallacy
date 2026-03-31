@@ -7,8 +7,8 @@ public class SceneSpawnPoint : MonoBehaviour
 
     private IEnumerator Start()
     {
-        yield return null; //frame delay so that player can spawn
-
+        yield return new WaitForEndOfFrame(); //frame delay so that player can spawn
+        //yield return null;
         if (SceneTransition.LastSpawnID == spawnID)
         {
             PlayerPersistence player = PlayerPersistence.Instance;
@@ -19,7 +19,6 @@ public class SceneSpawnPoint : MonoBehaviour
 
             health.ResetAfterSceneLoad();
 
-            //ForceCameraTrigger(player);//Because Player spawns inside the trigger and makes the camera go to a different camera bound, 2D collider camera, bleeww but doesn't work rn
         }
     }
 }

@@ -7,20 +7,6 @@ public class WorldState : MonoBehaviour
     public int playerHealth = -1;
     public int playerMaxHealth = -1;
 
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-
-        //transform.SetParent(null);//newest change
-
-        //DontDestroyOnLoad(gameObject);
-    }
-
     private HashSet<string> collectedObjects = new HashSet<string>();
     private HashSet<string> openedChests = new HashSet<string>();
     private Dictionary<string, int> npcStates = new Dictionary<string, int>();
@@ -48,6 +34,19 @@ public class WorldState : MonoBehaviour
 
     public HashSet<string> GetUnlockedDoors() => unlockedDoors;
 
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+
+        //transform.SetParent(null);//newest change
+
+        //DontDestroyOnLoad(gameObject);
+    }
     public void SetUnlockedDoors(List<string> list)
     {
         unlockedDoors = new HashSet<string>(list);

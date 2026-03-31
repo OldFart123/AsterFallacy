@@ -31,30 +31,3 @@ public class LevelMoving : MonoBehaviour
         }
     }
 }
-//    private void OnTriggerEnter2D(Collider2D entity)
-//    {
-//        if (!entity.CompareTag("Player"))
-//        {
-//            return;
-//        }
-
-//        Player_Movement player = entity.GetComponent<Player_Movement>();
-
-//        player.StartAutoWalk(enterDirection, 0.5f);
-
-//        if (SceneTransition.Instance != null)
-//        {
-//            SceneTransition.Instance.Transition(sceneBuildIndex, enterDirection, targetSpawnID);
-//        }
-//        //debugging to fix huge bugger
-//        if (SceneTransition.Instance != null)
-//        {
-//            Debug.Log("Transition triggered");
-//            SceneTransition.Instance.Transition(sceneBuildIndex, enterDirection, targetSpawnID);
-//        }
-//        else
-//        {
-//            Debug.LogError("SceneTransition is NULL!");
-//        }
-//    }
-//}

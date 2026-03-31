@@ -14,6 +14,13 @@ public class EnemyHealth : CharacterHealth
 
     private bool isDying = false;
 
+    private void Update()
+    {
+        if (GameState.GameplayBlocked)
+        {
+            return;
+        }
+    }
     protected override void OnHurt()
     {
         if (isDying)
@@ -28,6 +35,10 @@ public class EnemyHealth : CharacterHealth
     }
     public override void Damage(int dmg)
     {
+        if (Time.timeScale == 0)
+        {
+            return;
+        }
         if (isDying)
         {
             return;
@@ -61,7 +72,7 @@ public class EnemyHealth : CharacterHealth
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            rb.linearVelocity = Vector2.zero;
+            //rb.linearVelocity = Vector2.zero;
             rb.gravityScale = 2f;
             rb.constraints = RigidbodyConstraints2D.None;
         }
@@ -89,10 +100,10 @@ public class EnemyHealth : CharacterHealth
             patrol.enabled = false;
         }
 
-        if (rb != null)
-        {
-            rb.linearVelocity = force;
-        }
+        //if (rb != null)
+        //{
+        //    rb.linearVelocity = force;
+        //}
 
         yield return new WaitForSeconds(0.2f);
 

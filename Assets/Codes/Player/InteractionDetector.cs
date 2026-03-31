@@ -13,7 +13,9 @@ public class InteractionDetector : MonoBehaviour
     void Update()
     {
         if (GameState.GameplayBlocked)
+        {
             return;
+        }
 
         if (Input.GetKeyDown(KeyCode.E))
         {

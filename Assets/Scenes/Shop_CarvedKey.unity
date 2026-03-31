@@ -318,6 +318,8 @@ GameObject:
   m_Component:
   - component: {fileID: 512460107}
   - component: {fileID: 512460106}
+  - component: {fileID: 512460109}
+  - component: {fileID: 512460108}
   m_Layer: 0
   m_Name: NPC__Secret_Shop_Keeper
   m_TagString: Untagged
@@ -398,6 +400,79 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &512460108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512460105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b465a15c04cabb246bbc1b21106dbd08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPC
+  npcName: Keeper Shopper
+  normalDialogues:
+  - {fileID: 11400000, guid: 5c0d3f0334b6a0e45971f9e9ca320b2d, type: 2}
+  - {fileID: 11400000, guid: ae368e012de05604d871e164a7a4a1d5, type: 2}
+  - {fileID: 11400000, guid: 84bc171f67c32ef4c9de0f3327334206, type: 2}
+  introDialogue: {fileID: 0}
+  waitingDialogues: []
+  completedDialogue: {fileID: 0}
+  allowPostQuestDialogue: 0
+  postQuestDialogues: []
+  isQuestNPC: 0
+  requiredItemID: 
+  disappearOnComplete: 0
+  rewardPrefab: {fileID: 0}
+  questDoor: {fileID: 0}
+--- !u!61 &512460109
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512460105}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.4375, y: 0.049997807}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.7, y: 0.4857149}
+    oldSize: {x: 2.1875, y: 3.5}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 2.1875, y: 3.5}
+  m_EdgeRadius: 0
 --- !u!1 &781175619
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,7 +1295,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 8
-      m_TileSpriteIndex: 8
+      m_TileSpriteIndex: 11
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -1270,7 +1345,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 6
-      m_TileSpriteIndex: 7
+      m_TileSpriteIndex: 9
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -1320,7 +1395,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 4
-      m_TileSpriteIndex: 5
+      m_TileSpriteIndex: 8
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -1370,7 +1445,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 2
-      m_TileSpriteIndex: 2
+      m_TileSpriteIndex: 7
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2385,26 +2460,26 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 3
     m_Data: {fileID: -6345082514573911126, guid: 8b895ddfa696d024bb0cda60187873fc, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: 1414455896583610072, guid: 8b895ddfa696d024bb0cda60187873fc, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: 491096938, guid: 8b895ddfa696d024bb0cda60187873fc, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: -666335668, guid: 8b895ddfa696d024bb0cda60187873fc, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 2005254865, guid: 8b895ddfa696d024bb0cda60187873fc, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
   - m_RefCount: 3
     m_Data: {fileID: -1438734070, guid: 8b895ddfa696d024bb0cda60187873fc, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 2005254865, guid: 8b895ddfa696d024bb0cda60187873fc, type: 3}
   - m_RefCount: 13
     m_Data: {fileID: -1942443233, guid: 8b895ddfa696d024bb0cda60187873fc, type: 3}
   - m_RefCount: 4
@@ -2800,7 +2875,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.4
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

@@ -583,7 +583,6 @@ public class Player_Movement : MonoBehaviour
         rigid_bod.gravityScale = originalGravity;
     }
     #endregion LedgeGrab
-
     #region After Images and AutoWalk
     private void HandleSprintAfterimages()
     {

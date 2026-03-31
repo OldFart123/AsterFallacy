@@ -7,6 +7,10 @@ public class SaveData
     public int money;
     public int CarvedKey;
 
+    public float playerPosX;
+    public float playerPosY;
+    public string currentScene;
+
     public List<string> collectedItems = new List<string>();
     public List<string> openedChests = new List<string>();
     public List<string> inventoryItems = new List<string>();

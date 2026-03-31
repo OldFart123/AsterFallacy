@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public static class SaveSystem
 {
     private static string path => Application.persistentDataPath + "/save.json";
+    public static SaveData pendingLoad = null;
 
     public static void SaveGame()
     {
@@ -13,6 +14,14 @@ public static class SaveSystem
 
         //Player
         data.playerHealth = PlayerHealth.Instance.Health;
+
+        //Player Position
+        Vector3 pos = PlayerPersistence.Instance.transform.position;
+
+        data.playerPosX = pos.x;
+        data.playerPosY = pos.y;
+
+        data.currentScene = SceneManager.GetActiveScene().name;
 
         //Money
         data.money = Collectior.instance.CurrentMoney;
@@ -51,45 +60,24 @@ public static class SaveSystem
         }
 
         string json = File.ReadAllText(path);
-        SaveData data = JsonUtility.FromJson<SaveData>(json);
+        pendingLoad = JsonUtility.FromJson<SaveData>(json);
 
-        //Player
-        WorldState.Instance.playerHealth = data.playerHealth;
+        //Set position before scene loads
+        PlayerPersistence.LoadedPosition = new Vector2(pendingLoad.playerPosX, pendingLoad.playerPosY);
 
-        //Money
-        Collectior.instance.CurrentMoney = data.money;
-
-        //World
-        WorldState.Instance.SetCollected(data.collectedItems);
-        WorldState.Instance.SetOpenedChests(data.openedChests);
-
-        //Inventory
-        Inventory.Instance.SetItems(data.inventoryItems);
-
-        //NPC states
-        Dictionary<string, int> npcStates = new Dictionary<string, int>();
-
-        for (int i = 0; i < data.npcIDs.Count; i++)
-        {
-            npcStates[data.npcIDs[i]] = data.npcStages[i];
-        }
-
-        WorldState.Instance.SetAllNPCStates(npcStates);
-        WorldState.Instance.SetCompletedNPCs(data.completedNPCs);
-
-        //Door
-        WorldState.Instance.SetUnlockedDoors(data.unlockedDoors);
-
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        Debug.Log("Game Loaded");
+        SceneManager.LoadScene(pendingLoad.currentScene);
     }
-
     public static void DeleteSave()
     {
-        if (File.Exists(path) || Input.GetKeyDown(KeyCode.LeftControl))
+        if (File.Exists(path))// || Input.GetKeyDown(KeyCode.LeftControl))
         {
             File.Delete(path);
             Debug.Log("Save deleted");
         }
+    }
+
+    public static bool SaveExists()
+    {
+        return File.Exists(path);
     }
 }

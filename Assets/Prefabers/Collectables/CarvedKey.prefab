@@ -105,6 +105,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyItem
   keyID: CarvedKey
+  PickUpSound: {fileID: 8300000, guid: 0ef14257266ffcd46a6abe43a1d192de, type: 3}
+  keySprite: {fileID: 4119662206924269505, guid: 3058c89695a7bc24fa487a9bd372af06, type: 3}
+  keyItemUI: {fileID: 0}
 --- !u!61 &2092402047449166733
 BoxCollider2D:
   m_ObjectHideFlags: 0

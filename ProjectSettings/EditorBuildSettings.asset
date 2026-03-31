@@ -7,7 +7,7 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/_MainMenu.unity
-    guid: 9bbbc71a6a88ec54eb28152a661739b4
+    guid: 168de1bf5f91ee3459f1d058cbf3bd29
   - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: d7ea3959d27bac242b1f94554167273c
@@ -16,13 +16,19 @@ EditorBuildSettings:
     guid: f248a9543bbb07444872fd9bff90585f
   - enabled: 1
     path: Assets/Scenes/Colony_First Deeper.unity
-    guid: e317e79fc16ec7246aeafdadf061309c
+    guid: c0e8b8320638ed34fa45f52ba7648ab9
   - enabled: 1
     path: Assets/Scenes/Shop_CarvedKey.unity
     guid: 590178e630a3bf34e84f4e39cfff7f0b
   - enabled: 1
     path: Assets/Scenes/Colony_First_Top_Right.unity
     guid: a1b5092ab915b0d4a9f9cc1dc482d80f
+  - enabled: 1
+    path: Assets/Scenes/MainZone.unity
+    guid: c410d4607927bad4995a7fb21c96bd82
+  - enabled: 1
+    path: Assets/Scenes/End!.unity
+    guid: 9bbbc71a6a88ec54eb28152a661739b4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

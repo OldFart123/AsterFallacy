@@ -40,6 +40,10 @@ public class PlayerHealth : CharacterHealth
 
     public override void Damage(int dmg)
     {
+        if (Time.timeScale == 0)
+        {
+            return;
+        }
         base.Damage(dmg);
 
         if (WorldState.Instance != null)

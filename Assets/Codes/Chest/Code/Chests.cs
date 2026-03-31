@@ -63,7 +63,7 @@ public class Chests : MonoBehaviour, IInteractable
 
     private IEnumerator SpawnLootAfterDelay()
     {
-        yield return new WaitForSeconds(openDelay);
+        yield return new WaitForSecondsRealtime(openDelay);
 
         foreach (GameObject item in itemPrefabs)
         {

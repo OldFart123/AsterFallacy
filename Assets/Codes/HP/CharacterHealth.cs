@@ -21,6 +21,11 @@ public class CharacterHealth : MonoBehaviour, IDamagable
     // Standard damage
     public virtual void Damage(int dmg)
     {
+        if (GameState.GameplayBlocked)
+        {
+            return;
+        }
+
         if (isInvincible || Health <= 0)
         {
             return;
@@ -39,7 +44,7 @@ public class CharacterHealth : MonoBehaviour, IDamagable
         }
     }
 
-    // Damage with attacker reference
+    //Damage with attacker reference
     public virtual void Damage(int dmg, Transform attacker)
     {
         lastAttacker = attacker;
